@@ -8,11 +8,11 @@ version: 1.0
 //Includes
 #include "Arduino.h"
 #include "compute.h"
-#include "init.h"
 #include "read.h"
 #include "safe.h"
 #include "rtc.h"
 #include "system.h"
+#include "send.h"
 
 
 //#include "logger.h"
@@ -20,8 +20,9 @@ version: 1.0
 
 void setup() 
 {
-   //init_bluetooth();
+  init_bluetooth();
   init_rtc();
+
 }
 
 void loop() 
