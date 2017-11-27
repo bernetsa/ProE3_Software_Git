@@ -26,19 +26,17 @@ void init_rtc()
 char* getDay() 
 {
  
-  char* a =  rtc.getDOWStr();
-  return a;
+  return rtc.getDOWStr();
+  
 }
 
 char* getDate() 
 {
-  char* a  =  rtc.getDateStr();
-  return a;
+  return  rtc.getDateStr();
 }
 
 char* getTimee()
 {
-  char* a  = rtc.getTimeStr();
-  return a;
+  return rtc.getTimeStr();
 }
 
