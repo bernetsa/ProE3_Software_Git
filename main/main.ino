@@ -20,19 +20,25 @@ version: 1.0
 
 void setup() 
 {
+  delay(5000);
   init_bluetooth();
-  init_rtc();
+  //init_rtc();
 
 }
 
 void loop() 
 {
-      
+  //Variable initialication 
+  long actual_power = 0;
+  long actual_current = 0;
+  long actual_voltage = 0;
 
+  //called functions
+  senddata();
 }
 
 //Notes
-//Serial.print("it works");
+//
 /*
 if(Serial.available() > 0)
   {
@@ -40,5 +46,7 @@ if(Serial.available() > 0)
   }  
 
         Serial.print(a);
+        Serial.print("it works");
       Serial.print('\n');
  */
+
