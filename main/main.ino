@@ -89,8 +89,14 @@ void loop()
   voltage = voltage >> 15;
   float v_real = (float) current * (3.3/1024.0) *(1.0/0.1) ;
   float power = compute_power(c_real, v_real);
+
+  //Get Date etc.
+  char weekday = *(getDay());
+  char timee = *(getTimee());
+  char datee = *(getDate());
   
   //Speichern
+  
 
   //Reset Variables
 
