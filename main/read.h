@@ -6,10 +6,17 @@ version: 1.0
 #ifndef read_h
 #define read_h
 
-void readin_voltage(long* actualvoltage);
-void readin_current1(long* actualcurrent);
-void readin_current2(long* actualcurrent);
-void readin_current3(long* actualcurrent);
+long readin_voltage();
+
+
+long readin_current1();
+
+
+long readin_current2();
+
+
+long readin_current3();
+
 
 
 ////Reads in the voltage and returns the value of the Netvoltage in V (as a float)

@@ -7,28 +7,28 @@ version: 1.0
 #include "read.h"
 
 
-void readin_voltage(long* actualvoltage)
+
+
+
+long readin_voltage()
 {
-  *actualvoltage += (long) analogRead(0);
-  //shiften
+  return (long) analogRead(0);
 }
 
-void readin_current1(long* actualcurrent)
+long readin_current1()
 {
-  *actualcurrent += (long) analogRead(1);
-  //shiften
+  return (long) analogRead(1);
+  
 }
 
-void readin_current2(long* actualcurrent)
+long readin_current2()
 {
-  *actualcurrent += (long) analogRead(2);
-  //shiften
+  return  (long) analogRead(2);
 }
 
-void readin_current3(long* actualcurrent)
+long readin_current3()
 {
-  *actualcurrent += (long) analogRead(3);
-  //shiften
+  return (long) analogRead(3);
 }
 
 
