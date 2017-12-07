@@ -6,49 +6,43 @@ version: 1.0
 #include "Arduino.h"
 #include "safe.h"
 #include "rtc.h"
+#include <SPI.h>
+#include <SD.h>
 
-//
-//#include <SPI.h>
-//#include <SD.h>
+File myFile;
+int pinCS = 8; 
+void setup_SD() 
+{
+    //eventuell SS Pin als Output definieren
+    pinMode(pinCS, OUTPUT);
+    SD.begin(pinCS);
+}
+void sd_write(char* datee, char* timee, char* weekday, float power) 
+{
+  char p = (char) power;
+  //File mode append?
+  myFile = SD.open("jps.txt", FILE_WRITE);
+  if (myFile)
+  {    
+    //Möglicher Fehler. Datee timee, etc nicht null-terminiert
+    myFile.print(datee);
+    myFile.print('\t'); 
+    myFile.print(timee);
+    myFile.print('\t'); 
+    myFile.print(weekday);
+    myFile.print('\t');  
+    myFile.print(p);
+    myFile.print("\r\n"); 
+    myFile.close(); // close the file
+  }
+}
 
-
-//File myFile;
-//int pinCS = 8; 
-//void setup() {
-//    
-//  Serial.begin(9600);
-//  pinMode(pinCS, OUTPUT);
-//  
-//  // SD Card Initialization
-//  if (SD.begin())
-//  {
-//    Serial.println("SD card is ready to use.");
-//  } else
-//  {
-//    Serial.println("SD card initialization failed");
-//    return;
-//  }
-// 
-//}
-//void loop() {
-//  Serial.print(rtc.getTimeStr());
-//  Serial.print(",");
-//  Serial.println(int(rtc.getTemp()));
-// 
-//  myFile = SD.open("test.txt", FILE_WRITE);
-//  if (myFile) {    
-//    myFile.print(rtc.getTimeStr());
-//    myFile.print(",");    
-//    myFile.println(int(rtc.getTemp()));
-//    myFile.close(); // close the file
-//  }
-//  // if the file didn't open, print an error:
-//  else {
-//    Serial.println("error opening test.txt");
-//  }
-//  delay(3000);
-//}
-
+void sd_read()
+{
+  myFile = SD.open("jps.txt", FILE_WRITE);
+  myFile.read();
+  myFile.close();
+}
 /*
   SD card test 
    
@@ -90,7 +84,7 @@ by Tom Igoe
 //  Serial.begin(9600);
 //   while (!Serial) {
 //    ; // wait for serial port to connect. Needed for Leonardo only
-//  }
+//}
 
 
 //  Serial.print("\nInitializing SD card...");
