@@ -10,18 +10,31 @@ version: 1.0
 #include <SD.h>
 
 File myFile;
-int pinCS = 8; 
+int pinCS = 17; 
 void setup_SD() 
 {
-    //eventuell SS Pin als Output definieren
-    pinMode(pinCS, OUTPUT);
-    SD.begin(pinCS);
+    Serial.print("Initializing SD card...");
+    if (!SD.begin(pinCS)) 
+    {
+      Serial.println("initialization failed!");
+      return;
+    }
+    Serial.println("initialization done.");
+    SD.remove("jps.txt");
+    
 }
-void sd_write(char* datee, char* timee, char* weekday, float power) 
+void sd_write(char* datee, char* timee, char* weekday, float power, float current, float voltage) 
 {
-  char p = (char) power;
+  char power_c[15];
+  char current_c[15];
+  char voltage_c[15];
+  dtostrf(power,5, 2, power_c);
+  dtostrf(current,5, 2, current_c);
+  dtostrf(voltage,5, 2, voltage_c);
+  
   //File mode append?
   myFile = SD.open("jps.txt", FILE_WRITE);
+  
   if (myFile)
   {    
     //Möglicher Fehler. Datee timee, etc nicht null-terminiert
@@ -30,19 +43,19 @@ void sd_write(char* datee, char* timee, char* weekday, float power)
     myFile.print(timee);
     myFile.print('\t'); 
     myFile.print(weekday);
-    myFile.print('\t');  
-    myFile.print(p);
+    myFile.print('\t');
+    myFile.print(power_c);
+    myFile.print('\t');
+    myFile.print(current_c);
+    myFile.print('\t');    
+    myFile.print(voltage_c);
     myFile.print("\r\n"); 
     myFile.close(); // close the file
   }
 }
 
-void sd_read()
-{
-  myFile = SD.open("jps.txt", FILE_WRITE);
-  myFile.read();
-  myFile.close();
-}
+
+
 /*
   SD card test 
    

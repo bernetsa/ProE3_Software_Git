@@ -6,13 +6,17 @@ version: 1.0
 #include "Arduino.h"
 #include "send.h"
 #include <SoftwareSerial.h>
+#include <SPI.h>
+#include <SD.h>
 
 SoftwareSerial bluetoothSerial(0, 1);
+File myFile;
 
 
 int statesend = 1;
 
-void init_bluetooth() {
+void init_bluetooth()
+{
   /*
   bluetoothSerial.begin(38400); // Default communication rate of the Bluetooth module
    // HC-05 auf Defaultwere setzen -> Slave mode, Baudrate 38400, Passwort:1234,   Device-Name: "hc01.com HC-05"
@@ -33,15 +37,33 @@ void init_bluetooth() {
   bluetoothSerial.println("AT+DISC"); delay(500);
  */
  bluetoothSerial.begin(19200);
-
 }
 
-void senddata() 
+void sd_send()
 {
-    
-    bluetoothSerial.write("HEllO\n");
-    delay(1000);
-    
+  char a = 'n';
+  if(bluetoothSerial.available())
+  {
+    char a = bluetoothSerial.read();
+  }
+
+  if (a == 'r')
+  {
+    myFile = SD.open("jps.txt");
+    if (myFile) 
+    {
+      // read from the file until there's nothing else in it:
+      while (myFile.available()) 
+      {
+        bluetoothSerial.write(myFile.read());
+      }
+    // close the file:
+      myFile.close();
+    }
+  }
+ 
+}
+
   /*
   if(bluetoothSerial.available() > 0)
     { // Checks whether data is comming from the serial port
@@ -55,26 +77,9 @@ void senddata()
       statesend = 0;
     }*/
     
-}
 
-/* SKETCH (nicht von mir) um HC-05 in den Programmiermodus zu versetzen und per Serial auslesen zu können 
-Ohne Änderungen kompatibel mit YUN und UNO und wahrscheinlich sogar Leonardo, Ethernet usw.
 
-Zunächst YUN und UNO so anschließen: 
 
-VCC -> 3.3V, 
-GND -> GND, 
-TX-> D9 (=SoftSerial RX), 
-RX ->D10 (=SoftSerial TX). 
-
-Für den Programmiermodus ist wichtig: 
-1. Bei der mySerial-Initialisierung im Setup des Sketches ist die 38400 baud-rate nötig.
-2. Der KEY-Pin des HC-05 muss für den AT-Kommando-Programmiermodus an 3.3V angesteckt werden 
-(Ja, "VCC" UND "KEY" an 3.3V. Nehmt dafür eine Klemme oder ein Breadboard), ALLERDINGS ist der Zeitpunkt wichtig:
-
-Beim Yun (und vermutlich Leonardo) den "KEY"-Pin BEVOR man den Yun per USB an den Computer steckt mit 3.3V verbinden. Beim Uno NACHDEM man den UNO per USB mit dem PC verbunden hat. Wenn Ihr erfolgreich im Programmiermodus seid, blinkt das HC-05 in langen Intervallen und Ihr könnt den Serial Monitor der IDE öffnen, den Serial Monitor auf "BL + CR" und baud-rate 9600 schalten und testweise "AT" eingeben. Es sollte "OK" erscheinen. Die restlichen zahlreichen Kommandos bitte dem HC-05-datasheet entnehmen.
-
-*/
 
 
 

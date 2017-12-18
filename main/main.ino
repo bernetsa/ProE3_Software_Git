@@ -4,7 +4,6 @@ last change: 02.11.2017
 version: 1.0
 */
 
-
 //Includes
 #include "Arduino.h"
 #include "compute.h"
@@ -24,10 +23,13 @@ version: 1.0
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
+//Variables
 volatile long actual_current = 0;
 volatile long actual_voltage = 0;
 volatile unsigned int count_additions = 0;
 volatile int temp = 0;
+File myFile;
+
 //ISR
 void sumup()
 {
@@ -50,31 +52,30 @@ void sumup()
 //INIT
 void setup() 
 {
-  //Make ADC faster
+  //set prescale of ADC to 16
   #if FASTADC
- // set prescale to 16
+ // 
  sbi(ADCSRA,ADPS2) ;
  cbi(ADCSRA,ADPS1) ;
  cbi(ADCSRA,ADPS0) ;
   #endif
 
   void setup_SD();
-  //pinMode(13, OUTPUT); 
-  delay(5000);
+  delay(1000);
   init_bluetooth();
-   delay(5000);
-  //init_rtc();
-  Timer1.initialize(100);
-  Timer1.attachInterrupt(sumup);
-  //pinMode(7, OUTPUT);
+  delay(1000);
+  init_rtc();
+  delay(1000);
+  //Timer1.initialize(100);
+  //Timer1.attachInterrupt(sumup);
+  Serial.begin(9600);
+  setup_SD();
 }
 
 //MAIN Programm
 void loop() 
 {
-      Serial.print("it works");
-      Serial.print('\n');
-//TEST
+
 
 //  //Wait for measurment
 //  while(count_additions < 32768){}
@@ -97,22 +98,25 @@ void loop()
 //  float v_real = (float) current * (3.3/1024.0) *(1.0/0.1) ;
 //  float power = compute_power(c_real, v_real);
 //
-//  //Get Date etc.
-//  char* weekday = getDay();
-//  char* timee = getTimee();
-//  char* datee = getDate();
-  
-  //Speichern
- // sd_write(datee, timee, weekday, power);
 
+  //Get Date etc. 
+    char* weekday = getDay();
+    char* timee = getTimee();
+    char* datee = getDate();
+
+  //Speichern
+  delay(5000);
+  sd_write(datee, timee, weekday, 10.0, 10.0, 10.0);
+  delay(5000);
   
+  sd_send();
   //Senden
-  senddata();
+  
 }
 
 
-//Notes/////////////////////////////////////////////////
-//
+//Notes/////////////////////////////////Notes/////////////////////////////////Notes/////////////////////////////////Notes///////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 if(Serial.available() > 0)
   {

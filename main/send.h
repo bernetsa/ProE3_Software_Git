@@ -7,7 +7,6 @@ version: 1.0
 #define send_h
 
 void init_bluetooth();
-void senddata();
-
+void sd_send();
 #endif
 
