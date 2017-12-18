@@ -10,7 +10,6 @@ version: 1.0
 #include "read.h"
 #include "safe.h"
 #include "rtc.h"
-#include "send.h"
 #include "TimerOne.h" 
 //#include "logger.h"
 #define FASTADC 1
@@ -28,7 +27,7 @@ volatile long actual_current = 0;
 volatile long actual_voltage = 0;
 volatile unsigned int count_additions = 0;
 volatile int temp = 0;
-File myFile;
+
 
 //ISR
 void sumup()
@@ -100,17 +99,18 @@ void loop()
 //
 
   //Get Date etc. 
-    char* weekday = getDay();
-    char* timee = getTimee();
-    char* datee = getDate();
+  char* weekday = getDay();
+  char* timee = getTimee();
+  char* datee = getDate();
 
-  //Speichern
-  delay(5000);
-  sd_write(datee, timee, weekday, 10.0, 10.0, 10.0);
-  delay(5000);
-  
+  //Safe and send
   sd_send();
-  //Senden
+  
+  delay(10000);
+  sd_write(datee, timee, weekday, 10.0, 10.0, 10.0);
+
+  sd_send();
+
   
 }
 

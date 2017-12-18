@@ -10,5 +10,7 @@ void setup_SD();
 void sd_write(char* datee, char* timee, char* weekday, float power, float current, float voltage);
 void sd_read();
 
+void init_bluetooth();
+void sd_send();
 #endif
 

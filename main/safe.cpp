@@ -8,9 +8,14 @@ version: 1.0
 #include "rtc.h"
 #include <SPI.h>
 #include <SD.h>
+#include <SoftwareSerial.h>
+
+
+//SoftwareSerial bluetoothSerial(0, 1);
 
 File myFile;
-int pinCS = 17; 
+int pinCS = 17;
+
 void setup_SD() 
 {
     Serial.print("Initializing SD card...");
@@ -23,6 +28,7 @@ void setup_SD()
     SD.remove("jps.txt");
     
 }
+
 void sd_write(char* datee, char* timee, char* weekday, float power, float current, float voltage) 
 {
   char power_c[15];
@@ -54,6 +60,75 @@ void sd_write(char* datee, char* timee, char* weekday, float power, float curren
   }
 }
 
+
+
+void init_bluetooth()
+{
+  /*
+  bluetoothSerial.begin(38400); // Default communication rate of the Bluetooth module
+   // HC-05 auf Defaultwere setzen -> Slave mode, Baudrate 38400, Passwort:1234,   Device-Name: "hc01.com HC-05"
+  bluetoothSerial.println("AT+ORGL"); delay(500);
+    // Setze Name
+  bluetoothSerial.println("AT+NAME=JewelsPerSecond"); delay(500);
+    // Setze Pin auf 1234
+  bluetoothSerial.println("AT+PSWD=4321"); delay(500);
+    // Setze Baudrate auf 19200
+  //bluetoothSerial.println("AT+UART=19200,1,0"); delay(500);
+ bluetoothSerial.println("AT+UART=19200,1,0"); delay(500);
+ 
+  // Modul neustarten und eventuelle Verbindungen resetten
+  bluetoothSerial.println("AT+RESET"); delay(1000);
+
+  // SPP Profile Lib initialisieren und disconnecten
+  bluetoothSerial.println("AT+INIT"); delay(500);
+  bluetoothSerial.println("AT+DISC"); delay(500);
+ */
+ Serial1.begin(19200);
+}
+
+void sd_send()
+{
+  char a = '0';
+  if(Serial1.available())
+  {
+    a = Serial1.read();
+  }
+
+  if (a > '0')
+  {
+    myFile = SD.open("jps.txt");
+    if (myFile) 
+    {
+      // read from the file until there's nothing else in it:
+      while (myFile.available()) 
+      {
+        Serial1.write(myFile.read());
+      }
+    // close the file:
+      myFile.close();
+    }
+  }
+ 
+}
+
+
+
+//Notes/////////////////////////////////Notes/////////////////////////////////Notes/////////////////////////////////Notes///////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /*
+  if(bluetoothSerial.available() > 0)
+    { // Checks whether data is comming from the serial port
+      statesend = bluetoothSerial.read(); // Reads the data from the serial port
+    }
+    
+  if (statesend == '1') 
+    {
+      bluetoothSerial.write("HEllO\n");
+      delay(1000);
+      statesend = 0;
+    }*/
+    
 
 
 /*
