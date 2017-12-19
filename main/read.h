@@ -6,7 +6,7 @@ version: 1.0
 #ifndef read_h
 #define read_h
 
-long readin_voltage();
+int readin_voltage();
 
 
 long readin_current1();
@@ -15,7 +15,7 @@ long readin_current1();
 long readin_current2();
 
 
-long readin_current3();
+int readin_current3();
 
 
 

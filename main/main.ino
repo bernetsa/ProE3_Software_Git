@@ -10,21 +10,26 @@ version: 1.0
 #include "read.h"
 #include "safe.h"
 #include "rtc.h"
-#include "TimerOne.h" 
+#include "TimerOne.h"
+
 //#include "logger.h"
+
+//Defines
+
 #define FASTADC 1
 
-// defines for setting and clearing register bits
-#ifndef cbi
+#ifndef cbi   // defines for setting and clearing register bits
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #endif
 #ifndef sbi
 #define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
 #endif
 
+
+
 //Variables
-volatile long actual_current = 0;
-volatile long actual_voltage = 0;
+volatile long current = 0;
+volatile long power = 0;
 volatile unsigned int count_additions = 0;
 volatile int temp = 0;
 
@@ -32,42 +37,60 @@ volatile int temp = 0;
 //ISR
 void sumup()
 {
-  /*
-  if(temp == 0)
-  {
-    digitalWrite(13, HIGH);
-    temp = 1;
-  }
-  else
-  {
-    digitalWrite(13, LOW);
-    temp = 0;
-  }*/
-//  actual_voltage += readin_voltage() - 496;
-//  actual_current += readin_current3() - 496;
-//  count_additions += 1;
+//  Speedtesting
+//  if(temp == 0)
+//  {
+//    digitalWrite(13, HIGH);
+//    temp = 1;
+//  }
+//  else
+//  {
+//    digitalWrite(13, LOW);
+//    temp = 0;
+//  }
+
+//
+  int actual_voltage = readin_voltage()  - 496;
+  int actual_current = readin_current3() - 496;
+  power += (long) (actual_voltage * actual_current);
+  count_additions += 1;
+
+//  long actual_voltage = readin_voltage();
+//  long actual_current = readin_current3();
+//  Serial.print(actual_voltage);
+//  Serial.print('\n');
+//  Serial.print(actual_current);
+//  Serial.print('\n');
+//  Serial.print('\n');
 }
 
 //INIT
 void setup() 
 {
-  //set prescale of ADC to 16
-  #if FASTADC
- // 
- sbi(ADCSRA,ADPS2) ;
- cbi(ADCSRA,ADPS1) ;
- cbi(ADCSRA,ADPS0) ;
-  #endif
-
+  //Init SD
   void setup_SD();
   delay(1000);
+  
+  //Init Bluetooth
   init_bluetooth();
   delay(1000);
+  
+  //Init Real time clock
   init_rtc();
   delay(1000);
-  //Timer1.initialize(100);
-  //Timer1.attachInterrupt(sumup);
+  
+  //Init ADC set Prescaler to 16
+  ADMUX = _BV(REFS0);
+  sbi(ADCSRA,ADPS2) ;
+  cbi(ADCSRA,ADPS1) ;
+  cbi(ADCSRA,ADPS0) ;
+  
+  //Init Timer for ISR
+  Timer1.initialize();
+  Timer1.attachInterrupt(sumup, 100);
   Serial.begin(9600);
+  
+  //Init SD-Card
   setup_SD();
 }
 
@@ -76,27 +99,32 @@ void loop()
 {
 
 
-//  //Wait for measurment
-//  while(count_additions < 32768){}
-//
-//  //Stop Interupts extract values and reset
-//  noInterrupts();
-//  count_additions = 0;
-//  long current = actual_current;
-//  long voltage = actual_voltage;
-//  actual_current = 0;
-//  actual_voltage = 0;
-//  count_additions = 0;
-//  interrupts();
-//  
-//  
-//  //Compute
-//  current = current >> 15;
-//  float c_real = (float) current * (3.3/1024.0) *(1.222 * 20000.2 /6.2) ;
-//  voltage = voltage >> 15;
-//  float v_real = (float) current * (3.3/1024.0) *(1.0/0.1) ;
-//  float power = compute_power(c_real, v_real);
-//
+  //Wait for measurments
+  while(count_additions < 50000){}
+
+  //Stop Interupts extract values and reset
+  noInterrupts();
+  long power_sum = power;
+  long current_sum = current;
+  int addition = count_additions;
+  current = 0;
+  power = 0;
+  count_additions = 0;
+  interrupts();
+  
+  
+  //Compute
+  power_sum = power_sum / count_additions;
+  float power_real = compute_power(power_sum);
+  
+//  char power_conv[15];
+//  dtostrf(power_real,5, 2, power_conv);
+//  Serial.print(power_conv);
+//  Serial.print('\n');
+//  char* timee_temp = getTimee();
+//  Serial.print(timee_temp);
+//  Serial.print('\n');
+//  Serial.print('\n');
 
   //Get Date etc. 
   char* weekday = getDay();
@@ -104,19 +132,15 @@ void loop()
   char* datee = getDate();
 
   //Safe and send
+  sd_write(datee, timee, weekday, power_real, 0.0, 0.0);
   sd_send();
-  
-  delay(10000);
-  sd_write(datee, timee, weekday, 10.0, 10.0, 10.0);
-
-  sd_send();
-
-  
 }
 
 
 //Notes/////////////////////////////////Notes/////////////////////////////////Notes/////////////////////////////////Notes///////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 /*
 if(Serial.available() > 0)
   {

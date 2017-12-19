@@ -7,7 +7,7 @@ version: 1.0
 #define compute_h
 
 
-float compute_power(float power, float current);
+float compute_power(float power);
 
 //void compute_power(long *actualpower, long *actualcurrent, long *actualvoltage);
 //void compute_voltage(&actual_voltage);
