@@ -10,9 +10,9 @@ version: 1.0
 #include "read.h"
 #include "safe.h"
 #include "rtc.h"
-#include "TimerOne.h"
+#include "TimerOne.h" //Quelle: Arduiono, Online Available: https://playground.arduino.cc/Code/Timer1, Licence: CC BY 3.0 US
 
-//#include "logger.h"
+
 
 //Defines
 
@@ -31,12 +31,19 @@ version: 1.0
 volatile long current = 0;
 volatile long power = 0;
 volatile unsigned int count_additions = 0;
-volatile int temp = 0;
+//volatile int temp = 0;
 
 
 //ISR
 void sumup()
 {
+    
+  int actual_voltage = readin_voltage()  - 496;
+  int actual_current = readin_current3() - 496;
+  power += (long) (actual_voltage * actual_current);
+  //current += actual_current;
+  count_additions += 1;
+  
 //  Speedtesting
 //  if(temp == 0)
 //  {
@@ -50,10 +57,12 @@ void sumup()
 //  }
 
 //
-  int actual_voltage = readin_voltage()  - 496;
-  int actual_current = readin_current3() - 496;
-  power += (long) (actual_voltage * actual_current);
-  count_additions += 1;
+  //Test Overflow
+//  int actual_voltage = 1024  - 496;
+//  int actual_current = 1024 - 496;
+//  power += (long) (actual_voltage * actual_current);
+//  count_additions += 1;
+
 
 //  long actual_voltage = readin_voltage();
 //  long actual_current = readin_current3();
@@ -113,26 +122,22 @@ void loop()
   interrupts();
   
   
-  //Compute
+  //Compute the power in Watt and the current
   power_sum = power_sum / count_additions;
+  current_sum = current_sum / count_additions;
   float power_real = compute_power(power_sum);
   
-//  char power_conv[15];
-//  dtostrf(power_real,5, 2, power_conv);
-//  Serial.print(power_conv);
-//  Serial.print('\n');
-//  char* timee_temp = getTimee();
-//  Serial.print(timee_temp);
-//  Serial.print('\n');
-//  Serial.print('\n');
-
+  //current_sum = current_sum / count_additions;
+  //float current_real = compute_current(current_sum);
+  float current_real = 10.0;
+  
   //Get Date etc. 
   char* weekday = getDay();
   char* timee = getTimee();
   char* datee = getDate();
 
-  //Safe and send
-  sd_write(datee, timee, weekday, power_real, 0.0, 0.0);
+  //Safe and Send if requested
+  sd_write(datee, timee, weekday, power_real, current_real);
   sd_send();
 }
 

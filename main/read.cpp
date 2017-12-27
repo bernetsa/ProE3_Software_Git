@@ -10,10 +10,7 @@ version: 1.0
 
 
 
-//long readin_voltage()
-//{
-//   return (long) analogRead(0);
-//}
+
 int readin_voltage()
 {
   ADMUX = (ADMUX & channel_voltage) ; // select analog input for voltage
@@ -38,10 +35,7 @@ long readin_current2()
   return  (long) analogRead(2);
 }
 
-//long readin_current3()
-//{
-// return  (long) analogRead(3);
-//}
+
 
 int readin_current3()
 {
@@ -66,8 +60,15 @@ int readin_current3()
 gives back a integer from 0 to 1023 (5V)
 pin =the number of the analog input pin to read from (0 to 5 on most boards, 0 to 7 on the Mini and Nano, 0 to 15 on the Mega)
 */
+//long readin_voltage()
+//{
+//   return (long) analogRead(0);
+//}
 
-
+//long readin_current3()
+//{
+// return  (long) analogRead(3);
+//}
 
 //
 //float spannungsteiler = 1;

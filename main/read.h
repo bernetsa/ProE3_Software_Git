@@ -6,32 +6,22 @@ version: 1.0
 #ifndef read_h
 #define read_h
 
-int readin_voltage();
+////Reads in the voltage and returns the value in a integer from 0 to 1023
+int readin_voltage();  
 
-
+//not in use at the moment
 long readin_current1();
 
-
+//not in use at the moment
 long readin_current2();
 
-
+//Reads in the current3 and returns the value in a integer from 0 to 1023
 int readin_current3();
 
-
-
-////Reads in the voltage and returns the value of the Netvoltage in V (as a float)
-//float readin_voltage();
-//
-//
-////Reads in the current1 and returns the value of the Netcurrent1 in mA (as a float)
-//float readin_current1();
-//
-////Reads in the current2 and returns the value of the Netcurrent3 in mA (as a float)
-//float readin_current2();
-//
-////Reads in the current3 and returns the value of the Netcurrent3 in mA (as a float)
-//float readin_current3();
-
-
 #endif
+
+
+
+
+
 

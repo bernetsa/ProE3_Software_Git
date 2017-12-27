@@ -2,7 +2,7 @@
 
 #include "Arduino.h"
 #include "rtc.h"
-#include <DS3231.h>
+#include <DS3231.h> //Quelle:  Henning Karlsen, Online Available: http://www.rinkydinkelectronics.com/library.php?id=73, Licence: CC BY-NC-SA 3.0.
 
 
 DS3231  rtc(SDA, SCL);
@@ -14,7 +14,7 @@ void init_rtc()
   // Initialize the rtc object
   rtc.begin();
   
-  // The following lines can be uncommented to set the date and time
+// The following lines can be uncommented to set the date and time
 //  rtc.setDOW(THURSDAY);     // Set Day-of-Week to SUNDAY
 //  rtc.setTime(16, 51, 20);     // Set the time to 12:00:00 (24hr format)
 //  rtc.setDate(7, 12, 2017);   // Set the date to January 1st, 2014   

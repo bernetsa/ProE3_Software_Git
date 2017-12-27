@@ -6,12 +6,12 @@ version: 1.0
 #include "Arduino.h"
 #include "safe.h"
 #include "rtc.h"
-#include <SPI.h>
+#include <SPI.h> //Quelle: Arduiono, Online Available: Buil in Arduiono 1.8.5, Licence: CC BY-SA 3.0
 #include <SD.h>
 #include <SoftwareSerial.h>
 
 
-//SoftwareSerial bluetoothSerial(0, 1);
+
 
 File myFile;
 int pinCS = 17;
@@ -29,14 +29,14 @@ void setup_SD()
     
 }
 
-void sd_write(char* datee, char* timee, char* weekday, float power, float current, float voltage) 
+void sd_write(char* datee, char* timee, char* weekday, float power, float current) 
 {
   char power_c[15];
   char current_c[15];
-  char voltage_c[15];
+  
   dtostrf(power,5, 2, power_c);
   dtostrf(current,5, 2, current_c);
-  dtostrf(voltage,5, 2, voltage_c);
+  
   
   //File mode append?
   myFile = SD.open("jps.txt", FILE_WRITE);
@@ -53,8 +53,6 @@ void sd_write(char* datee, char* timee, char* weekday, float power, float curren
     myFile.print(power_c);
     myFile.print('\t');
     myFile.print(current_c);
-    myFile.print('\t');    
-    myFile.print(voltage_c);
     myFile.print("\r\n"); 
     myFile.close(); // close the file
   }
@@ -64,25 +62,31 @@ void sd_write(char* datee, char* timee, char* weekday, float power, float curren
 
 void init_bluetooth()
 {
-  /*
-  bluetoothSerial.begin(38400); // Default communication rate of the Bluetooth module
-   // HC-05 auf Defaultwere setzen -> Slave mode, Baudrate 38400, Passwort:1234,   Device-Name: "hc01.com HC-05"
-  bluetoothSerial.println("AT+ORGL"); delay(500);
-    // Setze Name
-  bluetoothSerial.println("AT+NAME=JewelsPerSecond"); delay(500);
-    // Setze Pin auf 1234
-  bluetoothSerial.println("AT+PSWD=4321"); delay(500);
-    // Setze Baudrate auf 19200
-  //bluetoothSerial.println("AT+UART=19200,1,0"); delay(500);
- bluetoothSerial.println("AT+UART=19200,1,0"); delay(500);
- 
-  // Modul neustarten und eventuelle Verbindungen resetten
-  bluetoothSerial.println("AT+RESET"); delay(1000);
+  /* Uncomment for new initalication of the HC-05
+  Serial1.begin(38400); // Set the Communication Rate for AT-Comands
+   // Set HC-05 to default -> Slave mode
+  Serial1.println("AT+ORGL"); 
+  delay(500);
+  
+  // Set bluetooth name to JewelsPerSecond
+  Serial1.println("AT+NAME=JewelsPerSecond"); delay(500);
+  
+  // Set password to 4321
+  Serial1.println("AT+PSWD=4321"); delay(500);
+  
+  // Setze Baudrate for normal communication to 19200
+  Serial1.println("AT+UART=19200,1,0"); delay(500);
+  delay(500);
+  
+  // restar modul
+  Serial1.println("AT+RESET"); delay(1000);
 
-  // SPP Profile Lib initialisieren und disconnecten
-  bluetoothSerial.println("AT+INIT"); delay(500);
-  bluetoothSerial.println("AT+DISC"); delay(500);
+  // SPP Profile Lib (initalice and disconnecten)
+  Serial1.println("AT+INIT"); delay(500);
+  Serial1.println("AT+DISC"); delay(500);
  */
+
+ //Set Communicationrate of the Atmega32u4 Serial1
  Serial1.begin(19200);
 }
 
@@ -115,7 +119,7 @@ void sd_send()
 
 //Notes/////////////////////////////////Notes/////////////////////////////////Notes/////////////////////////////////Notes///////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  //SoftwareSerial bluetoothSerial(0, 1);
   /*
   if(bluetoothSerial.available() > 0)
     { // Checks whether data is comming from the serial port

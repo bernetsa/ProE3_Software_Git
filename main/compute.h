@@ -6,12 +6,10 @@ version: 1.0
 #ifndef compute_h
 #define compute_h
 
+//Computes the Power in Watt
+float compute_power(long power);
+float compute_current(long current);
 
-float compute_power(float power);
-
-//void compute_power(long *actualpower, long *actualcurrent, long *actualvoltage);
-//void compute_voltage(&actual_voltage);
-//void compute_current(&actual_current);
 #endif
 
 
