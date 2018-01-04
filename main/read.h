@@ -1,13 +1,16 @@
 /*
-last change: 02.11.2017
-version: 1.0
-*/
+ last change: 02.11.2017
+ version: 1.0
+ */
 
 #ifndef read_h
 #define read_h
 
+
+void init_adc();
+
 ////Reads in the voltage and returns the value in a integer from 0 to 1023
-int readin_voltage();  
+int readin_voltage();
 
 //not in use at the moment
 long readin_current1();
@@ -19,9 +22,3 @@ long readin_current2();
 int readin_current3();
 
 #endif
-
-
-
-
-
-

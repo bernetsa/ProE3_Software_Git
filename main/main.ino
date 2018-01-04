@@ -1,8 +1,7 @@
-
 /*
-last change: 02.11.2017
-version: 1.0
-*/
+ last change: 02.11.2017
+ version: 1.0
+ */
 
 //Includes
 #include "Arduino.h"
@@ -16,14 +15,7 @@ version: 1.0
 
 //Defines
 
-#define FASTADC 1
 
-#ifndef cbi   // defines for setting and clearing register bits
-#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
-#endif
-#ifndef sbi
-#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
-#endif
 
 
 
@@ -38,107 +30,123 @@ volatile unsigned int count_additions = 0;
 void sumup()
 {
     
-  int actual_voltage = readin_voltage()  - 496;
-  int actual_current = readin_current3() - 496;
-  power += (long) (actual_voltage * actual_current);
-  //current += actual_current;
-  count_additions += 1;
-  
-//  Speedtesting
-//  if(temp == 0)
-//  {
-//    digitalWrite(13, HIGH);
-//    temp = 1;
-//  }
-//  else
-//  {
-//    digitalWrite(13, LOW);
-//    temp = 0;
-//  }
-
-//
-  //Test Overflow
-//  int actual_voltage = 1024  - 496;
-//  int actual_current = 1024 - 496;
-//  power += (long) (actual_voltage * actual_current);
-//  count_additions += 1;
-
-
-//  long actual_voltage = readin_voltage();
-//  long actual_current = readin_current3();
-//  Serial.print(actual_voltage);
-//  Serial.print('\n');
-//  Serial.print(actual_current);
-//  Serial.print('\n');
-//  Serial.print('\n');
+    //  int actual_voltage = readin_voltage()  - 496;
+    //  int actual_current = readin_current3() - 496;
+    //  power += (long) (actual_voltage * actual_current);
+    //  current += (long) actual_current;
+    //  count_additions += 1;
+    
+    //  Speedtesting
+    //  if(temp == 0)
+    //  {
+    //    digitalWrite(13, HIGH);
+    //    temp = 1;
+    //  }
+    //  else
+    //  {
+    //    digitalWrite(13, LOW);
+    //    temp = 0;
+    //  }
+    
+    //
+    //Test Overflow
+    //  int actual_voltage = 1024  - 496;
+    //  int actual_current = 1024 - 496;
+    //  power += (long) (actual_voltage * actual_current);
+    //  count_additions += 1;
+    
+    
+    //  long actual_voltage = readin_voltage();
+    //  long actual_current = readin_current3();
+    //  Serial.print(actual_voltage);
+    //  Serial.print('\n');
+    //  Serial.print(actual_current);
+    //  Serial.print('\n');
+    //  Serial.print('\n');
 }
 
 //INIT
-void setup() 
+void setup()
 {
-  //Init SD
-  void setup_SD();
-  delay(1000);
-  
-  //Init Bluetooth
-  init_bluetooth();
-  delay(1000);
-  
-  //Init Real time clock
-  init_rtc();
-  delay(1000);
-  
-  //Init ADC set Prescaler to 16
-  ADMUX = _BV(REFS0);
-  sbi(ADCSRA,ADPS2) ;
-  cbi(ADCSRA,ADPS1) ;
-  cbi(ADCSRA,ADPS0) ;
-  
-  //Init Timer for ISR
-  Timer1.initialize();
-  Timer1.attachInterrupt(sumup, 100);
-  Serial.begin(9600);
-  
-  //Init SD-Card
-  setup_SD();
+    //Init SD
+    //void setup_SD();
+    delay(1000);
+    
+    //Init Bluetooth
+    init_bluetooth();
+    delay(1000);
+    
+    //Init Real time clock
+    init_rtc();
+    delay(1000);
+    Serial1.write("SetupADC");
+    init_adc();
+    
+    Serial1.write("done");
+    
+    //Init Timer for ISR
+    //Timer1.initialize();
+    //Timer1.attachInterrupt(sumup, 100);
+    Serial.begin(9600);
+    
+    //Init SD-Card
+    setup_SD();
 }
 
 //MAIN Programm
-void loop() 
+void loop()
 {
-
-
-  //Wait for measurments
-  while(count_additions < 50000){}
-
-  //Stop Interupts extract values and reset
-  noInterrupts();
-  long power_sum = power;
-  long current_sum = current;
-  int addition = count_additions;
-  current = 0;
-  power = 0;
-  count_additions = 0;
-  interrupts();
-  
-  
-  //Compute the power in Watt and the current
-  power_sum = power_sum / count_additions;
-  current_sum = current_sum / count_additions;
-  float power_real = compute_power(power_sum);
-  
-  //current_sum = current_sum / count_additions;
-  //float current_real = compute_current(current_sum);
-  float current_real = 10.0;
-  
-  //Get Date etc. 
-  char* weekday = getDay();
-  char* timee = getTimee();
-  char* datee = getDate();
-
-  //Safe and Send if requested
-  sd_write(datee, timee, weekday, power_real, current_real);
-  sd_send();
+    
+    
+    //Wait for measurments
+    //while(count_additions < 50000){}
+    delay(2000);
+    Serial1.write("Main Programm");
+    Serial1.write('\n');
+    //Stop Interupts extract values and reset
+    //noInterrupts();
+    long power_sum = power;
+    long current_sum = current;
+    int addition = count_additions;
+    current = 0;
+    power = 0;
+    count_additions = 0;
+    //interrupts();
+    
+    int t1 = readin_voltage();
+    int t2 = readin_current3();
+    Serial1.write(t1);
+    Serial1.write('\n');
+    Serial1.write(t2);
+    Serial1.write('\n');
+    t1 = analogRead(0);
+    t2 = analogRead(3);
+    Serial1.write(t1);
+    Serial1.write('\n');
+    Serial1.write(t2);
+    Serial1.write('\n');
+    
+    //    Serial1.write(t2);
+    //   Serial1.write('\n');
+    
+    
+    //Compute the power in Watt and the current
+    power_sum = power_sum / count_additions;
+    current_sum = current_sum / count_additions;
+    float power_real = compute_power(power_sum);
+    
+    //current_sum = current_sum / count_additions;
+    //float current_real = compute_current(current_sum);
+    float current_real = 10.0;
+    
+    //Get Date etc.
+    //char* weekday = getDay();
+    //char* timee = getTimee();
+    //char* datee = getDate();
+    
+    //Safe and Send if requested
+    //sd_write(datee, timee, weekday, power_real, current_real);
+    //sd_send();
 }
 
 
@@ -147,25 +155,25 @@ void loop()
 
 
 /*
-if(Serial.available() > 0)
-  {
-    
-  }  
-
-        Serial.print(a);
-        Serial.print("it works");
-      Serial.print('\n');
- */
+ if(Serial.available() > 0)
+ {
  
-  //Einlesen und berechnen
-  //int startTime = millis();                                   
-    
- //  int elapsedTime =   millis() - startTime;
+ }
+ 
+ Serial.print(a);
+ Serial.print("it works");
+ Serial.print('\n');
+ */
+
+//Einlesen und berechnen
+//int startTime = millis();
+
+//  int elapsedTime =   millis() - startTime;
 //  Serial.print(elapsedTime);
 //  Serial.print('\n');
 //  Serial.print('*actual_power');
-//  Serial.print('\n'); 
-  
+//  Serial.print('\n');
+
 //  for (int i = 0; i < 1024; ++i)
 //  {
 //    compute_voltage(&actual_voltage);
@@ -174,7 +182,8 @@ if(Serial.available() > 0)
 //  }
 //  actual_voltage = (actual_voltage >> 10);
 //  float voltage = (((float)vactual_voltage) / 1.222) * (3.3/1024) //*faktor shunt
-//  
+//
 //  actual_current = actual_current >> 10;
 //  compute_power(&actual_power, &actual_current, &actual_voltage);
+
 

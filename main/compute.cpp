@@ -1,22 +1,17 @@
-/*
-last change: 02.11.2017
-version: 1.0
-*/
-
 #include "Arduino.h"
 #include "compute.h"
 #include "read.h"
 
 float compute_power(long power)
 {
-  float power_r = ((float)power) * (3.3/1024.0) * (3.3/1024.0) * (1.0/0.1) * (1 / 2.111 * 0.000282);
-  return power_r;
+    float power_r = ((float)power) * (3.3/1024.0) * (3.3/1024.0) * (1.0/0.1) * (1 / 2.111 * 0.000282);
+    return power_r;
 }
 
 float compute_current(long current)
 {
-   float current_r = ((float) current) * (3.3/1024.0) /  0.1;
-   return current_r;
+    float current_r = ((float) current) * (3.3/1024.0) /  0.1;
+    return current_r;
 }
 
 
@@ -44,5 +39,4 @@ float compute_current(long current)
 //     current = readin_current2();
 //   }
 //}
-
 
