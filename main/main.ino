@@ -11,42 +11,36 @@
 #include "rtc.h"
 #include "TimerOne.h" //Quelle: Arduiono, Online Available: https://playground.arduino.cc/Code/Timer1, Licence: CC BY 3.0 US
 
-
-
 //Defines
-
-
-
-
 
 //Variables
 volatile long current = 0;
 volatile long power = 0;
 volatile unsigned int count_additions = 0;
-//volatile int temp = 0;
+volatile int temp = 0;
 
 
 //ISR
 void sumup()
 {
     
-    //  int actual_voltage = readin_voltage()  - 496;
-    //  int actual_current = readin_current3() - 496;
-    //  power += (long) (actual_voltage * actual_current);
-    //  current += (long) actual_current;
-    //  count_additions += 1;
+      int actual_voltage = readin_voltage()  - 496;
+      int actual_current = readin_current3() - 496;
+      power += (long) (actual_voltage * actual_current);
+      current += (long) actual_current;
+      count_additions += 1;
     
-    //  Speedtesting
-    //  if(temp == 0)
-    //  {
-    //    digitalWrite(13, HIGH);
-    //    temp = 1;
-    //  }
-    //  else
-    //  {
-    //    digitalWrite(13, LOW);
-    //    temp = 0;
-    //  }
+      //Speedtesting
+      if(temp == 0)
+      {
+        digitalWrite(13, HIGH);
+        temp = 1;
+      }
+      else
+      {
+        digitalWrite(13, LOW);
+        temp = 0;
+      }
     
     //
     //Test Overflow
@@ -68,8 +62,7 @@ void sumup()
 //INIT
 void setup()
 {
-    //Init SD
-    //void setup_SD();
+    
     delay(1000);
     
     //Init Bluetooth
@@ -80,13 +73,14 @@ void setup()
     init_rtc();
     delay(1000);
     Serial1.write("SetupADC");
+    
     init_adc();
     
     Serial1.write("done");
     
     //Init Timer for ISR
-    //Timer1.initialize();
-    //Timer1.attachInterrupt(sumup, 100);
+    Timer1.initialize();
+    Timer1.attachInterrupt(sumup, 600);
     Serial.begin(9600);
     
     //Init SD-Card
@@ -99,54 +93,37 @@ void loop()
     
     
     //Wait for measurments
-    //while(count_additions < 50000){}
-    delay(2000);
+    while(count_additions < 7000){}   //50000
     Serial1.write("Main Programm");
-    Serial1.write('\n');
+    Serial1.print('\n');
+    
     //Stop Interupts extract values and reset
-    //noInterrupts();
+    noInterrupts();
     long power_sum = power;
     long current_sum = current;
     int addition = count_additions;
     current = 0;
     power = 0;
     count_additions = 0;
-    //interrupts();
-    
-    int t1 = readin_voltage();
-    int t2 = readin_current3();
-    Serial1.write(t1);
-    Serial1.write('\n');
-    Serial1.write(t2);
-    Serial1.write('\n');
-    t1 = analogRead(0);
-    t2 = analogRead(3);
-    Serial1.write(t1);
-    Serial1.write('\n');
-    Serial1.write(t2);
-    Serial1.write('\n');
-    
-    //    Serial1.write(t2);
-    //   Serial1.write('\n');
+    interrupts();
     
     
     //Compute the power in Watt and the current
-    power_sum = power_sum / count_additions;
-    current_sum = current_sum / count_additions;
+    power_sum = power_sum / ((long) count_additions);
+    current_sum = current_sum / ((long) count_additions);
     float power_real = compute_power(power_sum);
     
-    //current_sum = current_sum / count_additions;
-    //float current_real = compute_current(current_sum);
-    float current_real = 10.0;
+   
+    float current_real = compute_current(current_sum);
     
     //Get Date etc.
-    //char* weekday = getDay();
-    //char* timee = getTimee();
-    //char* datee = getDate();
+    char* weekday = getDay();
+    char* timee = getTimee();
+    char* datee = getDate();
     
     //Safe and Send if requested
-    //sd_write(datee, timee, weekday, power_real, current_real);
-    //sd_send();
+    sd_write(datee, timee, weekday, power_real, current_real);
+    sd_send();
 }
 
 

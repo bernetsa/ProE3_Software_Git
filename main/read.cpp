@@ -9,7 +9,6 @@
 #define channel_current3 0b0100
 
 #define FASTADC 1
-
 #ifndef cbi   // defines for setting and clearing register bits
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
 #endif
@@ -19,16 +18,8 @@
 
 void init_adc()
 {
-    //ADMUX |= (1<<REFS0);
-    cbi(ADCSRA, ADEN); //Disable ADC
-    cbi(ADMUX, MUX0);  //Set Input for ADC
-    cbi(ADMUX, MUX1);
-    sbi(ADMUX, MUX2);
-    sbi(ADCSRA, ADEN);  //Enable ADC
-    
-    ADCSRA |= (1<<ADSC);        // Start a conversion
-    while(ADCSRA & (1<<ADSC));  // What until the bit is reset by the
-    return (int) ADC;
+
+  
     
     ADMUX |= (1<<REFS0);
     cbi(ADCSRA, ADEN); //Disable ADC
@@ -36,7 +27,10 @@ void init_adc()
     cbi(ADMUX, MUX1);
     sbi(ADMUX, MUX2);
     sbi(ADCSRA, ADEN);  //Enable ADC
-    sbi(ADCSRA, ADPS2); //set prescaler to 16
+     
+    sbi(ADCSRA,ADPS2) ; //set prescaler to 16
+    cbi(ADCSRA,ADPS1) ;
+    cbi(ADCSRA,ADPS0) ;
     
     ADCSRA |= (1<<ADSC);        // Start a conversion
     while(ADCSRA & (1<<ADSC));  // What until the bit is reset by the
@@ -73,7 +67,7 @@ int readin_current3()
 {
     cbi(ADCSRB,MUX5);
     cbi(ADCSRA, ADEN); //Disable ADC
-    cbi(ADMUX, MUX0);  //Set Input for ADC
+    sbi(ADMUX, MUX0);  //Set Input for ADC
     cbi(ADMUX, MUX1);
     sbi(ADMUX, MUX2);
     sbi(ADCSRA, ADEN);  //Enable ADC

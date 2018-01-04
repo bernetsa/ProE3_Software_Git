@@ -4,7 +4,7 @@
 
 float compute_power(long power)
 {
-    float power_r = ((float)power) * (3.3/1024.0) * (3.3/1024.0) * (1.0/0.1) * (1 / 2.111 * 0.000282);
+    float power_r = ((float) power) * (3.3/1024.0) * (3.3/1024.0) * (1.0/0.1) * (1.0 / 2.111 * 0.000282);
     return power_r;
 }
 
