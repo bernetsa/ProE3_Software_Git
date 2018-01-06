@@ -39,11 +39,11 @@ void init_adc()
 int readin_voltage()
 {
     cbi(ADCSRB,MUX5);
-    cbi(ADCSRA, ADEN); //Disable ADC
+    //cbi(ADCSRA, ADEN); //Disable ADC
     cbi(ADMUX, MUX0);  //Set Input for ADC
     cbi(ADMUX, MUX1);
     cbi(ADMUX, MUX2);
-    sbi(ADCSRA, ADEN);  //Enable ADC
+    //sbi(ADCSRA, ADEN);  //Enable ADC
     
     ADCSRA |= (1<<ADSC);        // Start a conversion
     while(ADCSRA & (1<<ADSC));  // What until the bit is reset by the
@@ -66,11 +66,11 @@ long readin_current2()
 int readin_current3()
 {
     cbi(ADCSRB,MUX5);
-    cbi(ADCSRA, ADEN); //Disable ADC
+    //cbi(ADCSRA, ADEN); //Disable ADC
     sbi(ADMUX, MUX0);  //Set Input for ADC
     cbi(ADMUX, MUX1);
     sbi(ADMUX, MUX2);
-    sbi(ADCSRA, ADEN);  //Enable ADC
+    //sbi(ADCSRA, ADEN);  //Enable ADC
     
     ADCSRA |= (1<<ADSC);        // Start a conversion
     while(ADCSRA & (1<<ADSC));  // What until the bit is reset by the
